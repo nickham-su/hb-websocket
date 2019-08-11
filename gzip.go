@@ -1,4 +1,4 @@
-package WS
+package hbws
 
 import (
 	"bytes"

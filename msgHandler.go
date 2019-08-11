@@ -1,4 +1,4 @@
-package WS
+package hbws
 
 import (
 	"encoding/json"
@@ -7,7 +7,7 @@ import (
 )
 
 // 心跳包处理
-func pingHandler(msg []byte, ws *WS) bool {
+func pingHandler(msg []byte, ws *hbws) bool {
 	var pi ping
 	if err := json.Unmarshal(msg, &pi); err != nil || pi.Ping == 0 {
 		return false
@@ -24,7 +24,7 @@ func pingHandler(msg []byte, ws *WS) bool {
 }
 
 // 订阅数据
-func subHandler(msg []byte, ws *WS) bool {
+func subHandler(msg []byte, ws *hbws) bool {
 	var data subMessage
 	if err := json.Unmarshal(msg, &data); err != nil || data.Ch == "" {
 		return false

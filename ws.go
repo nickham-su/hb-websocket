@@ -1,4 +1,4 @@
-package WS
+package hbws
 
 import (
 	"encoding/json"
@@ -7,8 +7,8 @@ import (
 	"time"
 )
 
-func New(url string) *WS {
-	ws := &WS{
+func New(url string) *hbws {
+	ws := &hbws{
 		url,
 		nil,
 		make(map[string]func(json.RawMessage)),
@@ -24,14 +24,14 @@ func New(url string) *WS {
 	return ws
 }
 
-type WS struct {
+type hbws struct {
 	url         string
 	connect     *websocket.Conn
 	subChannel  map[string]func(json.RawMessage)
 	msgHandlers []func([]byte, *WS) bool
 }
 
-func (ws *WS) readMessage() {
+func (ws *hbws) readMessage() {
 	go func() {
 		for {
 			_, message, err := ws.connect.ReadMessage()
@@ -45,7 +45,7 @@ func (ws *WS) readMessage() {
 	}()
 }
 
-func (ws *WS) handle(message []byte) {
+func (ws *hbws) handle(message []byte) {
 	if msg, err := gzipDecode(message); err == nil {
 		for _, handler := range ws.msgHandlers {
 			if handler(msg, ws) { // 任务链中返回true,表示msg被正确处理
@@ -56,7 +56,7 @@ func (ws *WS) handle(message []byte) {
 }
 
 // 创建连接
-func (ws *WS) newConnect() {
+func (ws *hbws) newConnect() {
 	fmt.Println("newConnect")
 	if ws.connect != nil {
 		ws.connect.Close()
@@ -73,7 +73,7 @@ func (ws *WS) newConnect() {
 }
 
 // 重连
-func (ws *WS) reconnect() {
+func (ws *hbws) reconnect() {
 	fmt.Println("reconnect")
 	ws.newConnect()
 	fmt.Println("重新订阅")
@@ -83,7 +83,7 @@ func (ws *WS) reconnect() {
 }
 
 // 订阅
-func (ws *WS) Sub(ch string, callback func(json.RawMessage)) {
+func (ws *hbws) Sub(ch string, callback func(json.RawMessage)) {
 	ws.subChannel[ch] = callback
 	subMsg := &struct {
 		Sub string `json:"sub"`
