@@ -12,7 +12,7 @@ func New(url string) *hbws {
 		url,
 		nil,
 		make(map[string]func(json.RawMessage)),
-		[]func([]byte, *WS) bool{},
+		[]func([]byte, *hbws) bool{},
 	}
 	ws.newConnect()
 	// 注册消息处理方法
@@ -28,7 +28,7 @@ type hbws struct {
 	url         string
 	connect     *websocket.Conn
 	subChannel  map[string]func(json.RawMessage)
-	msgHandlers []func([]byte, *WS) bool
+	msgHandlers []func([]byte, *hbws) bool
 }
 
 func (ws *hbws) readMessage() {
