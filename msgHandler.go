@@ -3,7 +3,7 @@ package WS
 import (
 	"encoding/json"
 	"github.com/gorilla/websocket"
-	"hb-sea-turtle/lib/logger"
+	"github.com/nickham-su/go-logger"
 )
 
 // 心跳包处理
@@ -17,7 +17,7 @@ func pingHandler(msg []byte, ws *WS) bool {
 	if data, err := json.Marshal(po); err == nil {
 		err = ws.connect.WriteMessage(websocket.TextMessage, data)
 		if err != nil {
-			logger.New().Error(err)
+			logger.Error.Println(err)
 		}
 	}
 	return true
