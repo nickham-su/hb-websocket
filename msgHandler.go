@@ -4,7 +4,10 @@ import (
 	"encoding/json"
 	"github.com/gorilla/websocket"
 	"github.com/nickham-su/go-logger"
+	"sync"
 )
+
+var pingLock sync.Mutex
 
 // 心跳包处理
 func pingHandler(msg []byte, ws *hbws) bool {
@@ -15,6 +18,8 @@ func pingHandler(msg []byte, ws *hbws) bool {
 
 	po := &pong{pi.Ping}
 	if data, err := json.Marshal(po); err == nil {
+		pingLock.Lock()
+		defer pingLock.Unlock()
 		err = ws.connect.WriteMessage(websocket.TextMessage, data)
 		if err != nil {
 			logger.Error.Println(err)
