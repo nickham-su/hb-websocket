@@ -20,6 +20,9 @@ func pingHandler(msg []byte, ws *hbws) bool {
 	if data, err := json.Marshal(po); err == nil {
 		pingLock.Lock()
 		defer pingLock.Unlock()
+		if ws.connect == nil {
+			return true
+		}
 		err = ws.connect.WriteMessage(websocket.TextMessage, data)
 		if err != nil {
 			logger.Error.Println(err)
